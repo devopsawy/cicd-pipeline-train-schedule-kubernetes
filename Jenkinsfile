@@ -5,8 +5,8 @@ pipeline {
         DOCKER_IMAGE_NAME = "devopsawy/train-schedule"
         APP = "train-schedule"
 	tools {
-   maven  = 'maven'
-   jdk  = 'java'
+   maven  = "maven"
+   jdk  = "java"
 }
     }
     stages {
