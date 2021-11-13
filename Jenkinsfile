@@ -3,6 +3,7 @@ pipeline {
     environment {
         //be sure to replace "devopsawy" with your own Docker Hub username
         DOCKER_IMAGE_NAME = "devopsawy/train-schedule"
+        APP = "train-schedule"
     }
     stages {
         stage('Build') {
