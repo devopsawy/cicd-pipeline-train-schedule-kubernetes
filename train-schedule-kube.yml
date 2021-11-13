@@ -1,11 +1,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: train-schedule-service
+  name: $APP-service
 spec:
   type: NodePort
   selector:
-    app: train-schedule
+    app: $APP
   ports:
   - protocol: TCP
     port: 30001
@@ -15,21 +15,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: train-schedule-deployment
+  name: $APP-deployment
   labels:
-    app: train-schedule
+    app: $APP
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: train-schedule
+      app: $APP
   template:
     metadata:
       labels:
-        app: train-schedule
+        app: $APP
     spec:
       containers:
-      - name: train-schedule
+      - name: $APP
         image: $DOCKER_IMAGE_NAME:$BUILD_NUMBER
         ports:
         - containerPort: 30001
