@@ -4,6 +4,10 @@ pipeline {
         //be sure to replace "devopsawy" with your own Docker Hub username
         DOCKER_IMAGE_NAME = "devopsawy/train-schedule"
         APP = "train-schedule"
+	tools {
+   maven 'maven'
+   jdk 'java'
+}
     }
     stages {
         stage('Build') {
@@ -13,6 +17,30 @@ pipeline {
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
+		stage('SonarQube analysis') {
+    environment {
+      SCANNER_HOME = tool 'Sonar-scanner'
+    }
+    steps {
+    withSonarQubeEnv(credentialsId: 'sonar-credentialsId', installationName: 'Sonar') {
+         sh '''$SCANNER_HOME/bin/sonar-scanner \
+         -Dsonar.projectKey=projectKey \
+         -Dsonar.projectName=projectName \
+         -Dsonar.sources=src/ \
+         -Dsonar.java.binaries=target/classes/ \
+         -Dsonar.exclusions=src/test/java/****/*.java \
+         -Dsonar.java.libraries=/var/lib/jenkins/.m2/**/*.jar \
+         -Dsonar.projectVersion=${BUILD_NUMBER}-${GIT_COMMIT_SHORT}'''
+       }
+     }
+}
+   stage('SQuality Gate') {
+     steps {
+       timeout(time: 1, unit: 'MINUTES') {
+       waitForQualityGate abortPipeline: true
+       }
+  }
+}
         stage('Build Docker Image') {
             when {
                 branch 'master'
